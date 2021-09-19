@@ -1,0 +1,1 @@
+/home/tomasz/.config/awesome/themes/my-powerarrow/components/lang.lua
