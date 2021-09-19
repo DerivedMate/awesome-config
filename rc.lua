@@ -752,5 +752,5 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 -- }}}
 
 -- Run my init script
-awful.spawn.easy_async_with_shell("bash /home/tomasz/selfinit.sh")
+awful.spawn.easy_async_with_shell("bash ~/.config/awesome/init.sh")
 -- ]]
