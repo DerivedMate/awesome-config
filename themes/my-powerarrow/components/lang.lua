@@ -11,7 +11,7 @@ local naughty   = require("naughty")
 local dpi       = beautiful.xresources.apply_dpi
 
 local factory = function (args)
-  local langs = { 'pl', 'gr' }
+  local langs = { 'pl', 'gr', 'il', 'ru' }
   local lang_len = 0
   local lang_index = {}
   for i, v in ipairs(langs) do

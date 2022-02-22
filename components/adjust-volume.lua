@@ -20,7 +20,7 @@ local dpi = beautiful.xresources.apply_dpi
 local offsetx = dpi(56)
 local offsety = dpi(300)
 local screen = awful.screen.focused()
-local icon_dir = "/home/tomasz/.config/awesome/icons/volume/mirage/"
+local icon_dir = "/home/mavi/.config/awesome/icons/volume/mirage/"
 
 
 -- ===================================================================

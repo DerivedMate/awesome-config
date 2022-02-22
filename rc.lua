@@ -110,7 +110,7 @@ local editor       = os.getenv("EDITOR") or "nvim"
 local browser      = "firefox"
 
 awful.util.terminal = terminal
-awful.util.tagnames = { "1", "2", "3", "4", "5" }
+awful.util.tagnames = { "1", "2", "3", "4", "5", "6" }
 awful.layout.layouts = {
     awful.layout.suit.tile
 }
@@ -234,7 +234,7 @@ root.buttons(mytable.join(
 globalkeys = mytable.join(
     -- Take a screenshot
     -- https://github.com/lcpz/dots/blob/master/bin/screenshot
-    awful.key({ altkey }, "p", function() os.execute("flameshot gui") end,
+    awful.key({ altkey }, "p", function() os.execute("~/bin/screenshot.sh") end, -- os.execute("flameshot gui")
               {description = "take a screenshot", group = "hotkeys"}),
 
     -- X screen locker
@@ -317,6 +317,16 @@ globalkeys = mytable.join(
         end,
         {description = "cycle with previous/go back", group = "client"}),
 
+    -- all minimized clients are restored 
+    awful.key({ modkey, "Shift"   }, "n", 
+        function()
+            local tag = awful.tag.selected()
+                for i=1, #tag:clients() do
+                    tag:clients()[i].minimized=false
+                    tag:clients()[i]:redraw()
+            end
+        end),
+
     -- Show/hide wibox
     awful.key({ modkey }, "b", function ()
             for s in screen do
@@ -343,6 +353,8 @@ globalkeys = mytable.join(
 
     -- Standard program
     awful.key({ modkey,           }, "Return", function () awful.spawn(terminal) end,
+              {description = "open a terminal", group = "launcher"}),
+    awful.key({ modkey,           }, "v", function () awful.spawn(terminal .. "-e 'cd ~/uni; vim ./Kosten.yaml'") end,
               {description = "open a terminal", group = "launcher"}),
     awful.key({ modkey, "Control" }, "r", awesome.restart,
               {description = "reload awesome", group = "awesome"}),
@@ -373,6 +385,10 @@ globalkeys = mytable.join(
     -- Language layout
 
     awful.key({ modkey, altkey }, "space", function () awesome.emit_signal("keyboard_lang_change") end, {
+        description = "change keyboard language",
+        group       = "client"
+    }),
+    awful.key({ modkey, "Shift" }, "space", function () awesome.emit_signal("keyboard_lang_change_prev") end, {
         description = "change keyboard language",
         group       = "client"
     }),
@@ -641,6 +657,7 @@ awful.rules.rules = {
           "DTA",  -- Firefox addon DownThemAll.
           "copyq",  -- Includes session name in class.
           "pinentry",
+          "zoom"
         },
         class = {
           "Arandr",
@@ -664,7 +681,10 @@ awful.rules.rules = {
           "ConfigManager",  -- Thunderbird's about:config.
           "pop-up",       -- e.g. Google Chrome's (detached) Developer Tools.
         }
-      }, properties = { floating = true }},
+      }, properties = { floating = true
+                      , placement = awful.placement.centered + awful.placement.no_overlap 
+                      }
+      },
 
     -- Add titlebars to normal clients and dialogs
     { rule_any = {type = { "normal", "dialog" }
