@@ -10,8 +10,8 @@ local beautiful = require("beautiful")
 local naughty   = require("naughty")
 local dpi       = beautiful.xresources.apply_dpi
 
-local factory = function (args)
-  local langs = { 'pl', 'gr', 'il', 'ru' }
+local factory = function(args)
+  local langs = { 'pl', 'gr', 'ar', 'ru' }
   local def_lang = 'pl'
   local lang_len = 0
   local lang_index = {}
@@ -35,8 +35,8 @@ local factory = function (args)
     awful.spawn.easy_async_with_shell(
       "setxkbmap -print -verbose 10 | grep layout | awk '{ print $2 }' | sed 's/[\\s\\t\\n\\r]+//g'",
       function(stdout)
-          local current_lang = trim1(stdout)
-          cb(tonumber(lang_index[current_lang]) % lang_len)
+        local current_lang = trim1(stdout)
+        cb(tonumber(lang_index[current_lang]) % lang_len)
       end,
       false
     )
@@ -44,23 +44,23 @@ local factory = function (args)
 
   local function set_lang(new_lang)
     awful.spawn.easy_async_with_shell(
-      "setxkbmap " .. new_lang ,
+      "setxkbmap " .. new_lang,
       function(stdout)
-        if string.len(stdout) > 0
-        then
-          naughty.notify({ title = "Lang switching error", text = stdout, timeout = 0 })
-        else
-          local new_markup = ""
-          for _, l in ipairs(langs) do
-            if l == new_lang then
-              new_markup = new_markup .. "<b>".. l .."</b> "
-            else
-              new_markup = new_markup .. "<span color='gray'>".. l .."</span> "
-            end
+      if string.len(stdout) > 0
+      then
+        naughty.notify({ title = "Lang switching error", text = stdout, timeout = 0 })
+      else
+        local new_markup = ""
+        for _, l in ipairs(langs) do
+          if l == new_lang then
+            new_markup = new_markup .. "<span color='white'>" .. l .. "</span> "
+          else
+            new_markup = new_markup .. "<span color='gray'>" .. l .. "</span> "
           end
-          lang_widget.markup = new_markup
         end
+        lang_widget.markup = new_markup
       end
+    end
     )
   end
 
@@ -68,18 +68,34 @@ local factory = function (args)
 
   awesome.connect_signal("keyboard_lang_change",
     function()
-      get_current_lang_index(function(i) 
-        set_lang(langs[i + 1]) 
-      end)
-    end
+    get_current_lang_index(function(i)
+      set_lang(langs[i + 1])
+    end)
+  end
   )
 
   awesome.connect_signal("keyboard_lang_change_prev",
     function()
-      get_current_lang_index(function(i) 
-        set_lang(langs[(i - 2) % lang_len + 1]) 
+    get_current_lang_index(function(i)
+      set_lang(langs[(i - 2) % lang_len + 1])
+    end)
+  end
+  )
+
+  awesome.connect_signal("keyboard_lang_set",
+    function(i)
+    set_lang(langs[i])
+  end
+  )
+
+  awesome.connect_signal("keyboard_lang_show",
+    function()
+    get_current_lang_index(function(i)
+      awful.spawn.easy_async_with_shell("gkbd-keyboard-display -l " .. langs[i], function()
+
       end)
-    end
+    end)
+  end
   )
 
   return lang_widget

@@ -5,11 +5,12 @@
 
 --]]
 
-local gears = require("gears")
-local lain  = require("lain")
-local awful = require("awful")
-local wibox = require("wibox")
-local dpi   = require("beautiful.xresources").apply_dpi
+local gears     = require("gears")
+local lain      = require("lain")
+local awful     = require("awful")
+local wibox     = require("wibox")
+local dpi       = require("beautiful.xresources").apply_dpi
+local beautiful = require("beautiful")
 -- local mylang  = require("components.lang")
 
 local math, string, os = math, string, os
@@ -22,7 +23,7 @@ theme.font                                      = "Terminus 13"
 theme.fg_normal                                 = "#F0EDEE"
 theme.fg_focus                                  = "#32D6FF"
 theme.fg_urgent                                 = "#C83F11"
-theme.bg_normal                                 = "#0A090C"
+theme.bg_normal                                 = "#0A090Ca0"
 theme.bg_focus                                  = "#1E2320"
 theme.bg_urgent                                 = "#3F3F3F"
 theme.taglist_fg_focus                          = "#00CCFF"
@@ -86,6 +87,7 @@ theme.titlebar_maximized_button_focus_active    = theme.dir .. "/icons/titlebar/
 theme.titlebar_maximized_button_normal_active   = theme.dir .. "/icons/titlebar/maximized_normal_active.png"
 theme.titlebar_maximized_button_focus_inactive  = theme.dir .. "/icons/titlebar/maximized_focus_inactive.png"
 theme.titlebar_maximized_button_normal_inactive = theme.dir .. "/icons/titlebar/maximized_normal_inactive.png"
+theme.bg_systray                                = theme.bg_normal
 
 
 local markup = lain.util.markup
@@ -109,14 +111,14 @@ theme.volume = lain.widget.alsa({
     end
 })
 theme.volume.widget:buttons(awful.util.table.join(
-                               awful.button({}, 4, function ()
-                                     awful.util.spawn("amixer set Master 1%+")
-                                     theme.volume.update()
-                               end),
-                               awful.button({}, 5, function ()
-                                     awful.util.spawn("amixer set Master 1%-")
-                                     theme.volume.update()
-                               end)
+    awful.button({}, 4, function()
+        awful.util.spawn("amixer set Master 1%+")
+        theme.volume.update()
+    end),
+    awful.button({}, 5, function()
+        awful.util.spawn("amixer set Master 1%-")
+        theme.volume.update()
+    end)
 ))
 
 -- MEM
@@ -175,7 +177,8 @@ local bat = lain.widget.bat({
 local neticon = wibox.widget.imagebox(theme.widget_net)
 local net = lain.widget.net({
     settings = function()
-        widget:set_markup(markup.fontfg(theme.font, "#FEFEFE", " " .. net_now.received .. " ↓↑ " .. net_now.sent .. " "))
+        widget:set_markup(markup.fontfg(theme.font, "#FEFEFE", " " .. net_now.received .. " ↓↑ " ..
+            net_now.sent .. " "))
     end
 })
 
@@ -187,94 +190,96 @@ local brightwidget = awful.widget.watch('light -G', 0.1,
     function(widget, stdout, stderr, exitreason, exitcode)
         local brightness_level = tonumber(string.format("%.0f", stdout))
         widget:set_markup(markup.font(theme.font, " " .. brightness_level .. "%"))
-end)
+    end)
 
 -- Separators
 local arrow = separators.arrow_left
 
 function theme.powerline_rl(cr, width, height)
-    local arrow_depth, offset = height/2, 0
+    local arrow_depth, offset = height / 2, 0
 
     -- Avoid going out of the (potential) clip area
     if arrow_depth < 0 then
-        width  =  width + 2*arrow_depth
+        width  = width + 2 * arrow_depth
         offset = -arrow_depth
     end
 
-    cr:move_to(offset + arrow_depth         , 0        )
-    cr:line_to(offset + width               , 0        )
-    cr:line_to(offset + width - arrow_depth , height/2 )
-    cr:line_to(offset + width               , height   )
-    cr:line_to(offset + arrow_depth         , height   )
-    cr:line_to(offset                       , height/2 )
+    cr:move_to(offset + arrow_depth, 0)
+    cr:line_to(offset + width, 0)
+    cr:line_to(offset + width - arrow_depth, height / 2)
+    cr:line_to(offset + width, height)
+    cr:line_to(offset + arrow_depth, height)
+    cr:line_to(offset, height / 2)
 
     cr:close_path()
 end
 
 function theme.powerline_lr(cr, width, height)
-    local arrow_depth, offset = height/2, 0
+    local arrow_depth, offset = height / 2, 0
 
     -- Avoid going out of the (potential) clip area
     if arrow_depth < 0 then
-        width  =  width + 2*arrow_depth
+        width  = width + 2 * arrow_depth
         offset = -arrow_depth
     end
 
-    cr:move_to(offset                       , 0        )
-    cr:line_to(offset + width - arrow_depth , 0        )
-    cr:line_to(offset + width               , height/2 )
-    cr:line_to(offset + width - arrow_depth , height   )
-    cr:line_to(offset                       , height   )
-    cr:line_to(offset + arrow_depth         , height/2 )
+    cr:move_to(offset, 0)
+    cr:line_to(offset + width - arrow_depth, 0)
+    cr:line_to(offset + width, height / 2)
+    cr:line_to(offset + width - arrow_depth, height)
+    cr:line_to(offset, height)
+    cr:line_to(offset + arrow_depth, height / 2)
 
     cr:close_path()
 end
 
 local function pl(widget, bgcolor, padding)
-    return wibox.container.background(wibox.container.margin(widget, dpi(16), dpi(16)), bgcolor, theme.powerline_rl)
+    return wibox.container.background(wibox.container.margin(widget, dpi(10), dpi(10), dpi(2), dpi(2)), bgcolor,
+        theme.powerline_rl)
 end
 
 local function lp(widget, bgcolor, padding)
-    return wibox.container.background(wibox.container.margin(widget, dpi(16), dpi(16)), bgcolor, theme.powerline_lr)
+    return wibox.container.background(wibox.container.margin(widget, dpi(10), dpi(10), dpi(2), dpi(2)), bgcolor,
+        theme.powerline_lr)
 end
 
 local function rec_pl(color)
-    return  wibox.container.background(wibox.container.margin(nil, dpi(16), dpi(16)), color, 
-        function(cr, width, height) 
-            local arrow_depth, offset = height/2, 0
+    return wibox.container.background(wibox.container.margin(nil, dpi(10), dpi(10)), color,
+        function(cr, width, height)
+            local arrow_depth, offset = height / 2, 0
 
             -- Avoid going out of the (potential) clip area
             if arrow_depth < 0 then
-                width  =  width + 2*arrow_depth
+                width  = width + 2 * arrow_depth
                 offset = -arrow_depth
             end
 
-            cr:move_to(offset              , 0        )
-            cr:line_to(offset + width      , 0        )
-            cr:line_to(offset + width      , height   )
-            cr:line_to(offset              , height   )
-            cr:line_to(offset + arrow_depth, height/2 )
+            cr:move_to(offset, 0)
+            cr:line_to(offset + width, 0)
+            cr:line_to(offset + width, height)
+            cr:line_to(offset, height)
+            cr:line_to(offset + arrow_depth, height / 2)
 
             cr:close_path()
         end)
 end
 
 local function rec_lp(color)
-    return  wibox.container.background(wibox.container.margin(nil, dpi(16), dpi(16)), color, 
-        function(cr, width, height) 
-            local arrow_depth, offset = height/2, 0
+    return wibox.container.background(wibox.container.margin(nil, dpi(16), dpi(16)), color,
+        function(cr, width, height)
+            local arrow_depth, offset = height / 2, 0
 
             -- Avoid going out of the (potential) clip area
             if arrow_depth < 0 then
-                width  =  width + 2*arrow_depth
+                width  = width + 2 * arrow_depth
                 offset = -arrow_depth
             end
 
-            cr:move_to(offset                      , 0        )
-            cr:line_to(offset + width              , 0        )
-            cr:line_to(offset + width - arrow_depth, height/2 )
-            cr:line_to(offset + width              , height   )
-            cr:line_to(offset                      , height   )
+            cr:move_to(offset, 0)
+            cr:line_to(offset + width, 0)
+            cr:line_to(offset + width - arrow_depth, height / 2)
+            cr:line_to(offset + width, height)
+            cr:line_to(offset, height)
 
             cr:close_path()
         end)
@@ -301,35 +306,33 @@ function theme.at_screen_connect(s)
     -- We need one layoutbox per screen.
     s.mylayoutbox = awful.widget.layoutbox(s)
     s.mylayoutbox:buttons(my_table.join(
-                           awful.button({}, 1, function () awful.layout.inc( 1) end),
-                           awful.button({}, 2, function () awful.layout.set( awful.layout.layouts[1] ) end),
-                           awful.button({}, 3, function () awful.layout.inc(-1) end),
-                           awful.button({}, 4, function () awful.layout.inc( 1) end),
-                           awful.button({}, 5, function () awful.layout.inc(-1) end)))
+        awful.button({}, 1, function() awful.layout.inc(1) end),
+        awful.button({}, 2, function() awful.layout.set(awful.layout.layouts[1]) end),
+        awful.button({}, 3, function() awful.layout.inc(-1) end),
+        awful.button({}, 4, function() awful.layout.inc(1) end),
+        awful.button({}, 5, function() awful.layout.inc(-1) end)))
     -- Create a taglist widget
     s.mytaglist = awful.widget.taglist(s, awful.widget.taglist.filter.all, awful.util.taglist_buttons)
 
     -- Create a tasklist widget
     s.mytasklist = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, awful.util.tasklist_buttons)
 
+    s.systray = wibox.widget.systray()
+    s.systray.visible = false
+
     -- Create a clock
     os.setlocale(os.getenv("LANG"))
-    local myclock = wibox.widget.textclock() 
+    local myclock = wibox.widget.textclock()
 
     -- Create the wibox
-
-    local shape = function(cr, width, height)
-        gears.shape.rectangle(cr, width, height)
-    end
-
     s.mywibox = awful.wibar({
-         position = "top", 
-         screen = s, 
-         height = dpi(25), 
-         bg = theme.bg_normal, 
-         fg = theme.fg_normal ,
-         type = "dock"
-        })
+        position = "top",
+        screen = s,
+        height = dpi(30),
+        bg = theme.bg_normal,
+        fg = theme.fg_normal,
+        type = "dock"
+    })
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -338,21 +341,20 @@ function theme.at_screen_connect(s)
             layout = wibox.layout.align.horizontal,
             { -- Left widgets
                 layout = wibox.layout.fixed.horizontal,
-                rec_lp("#1C6E8C"),
+                rec_lp("alpha"),
                 lp(wibox.widget { require('components.lang')(), layout = wibox.layout.align.horizontal }, "alpha"),
-                lp(wibox.widget { memicon, mem.widget, layout = wibox.layout.align.horizontal }, "#1C6E8C"),
-                lp(wibox.widget { cpuicon, cpu.widget, layout = wibox.layout.align.horizontal }, "#11A296"),
-                lp(wibox.widget { tempicon, temp.widget, layout = wibox.layout.align.horizontal }, "#06D6A0"),
             },
             nil,
             { -- Right widgets
                 layout = wibox.layout.fixed.horizontal,
-                pl(wibox.widget { neticon, net.widget, layout = wibox.layout.align.horizontal }, "#06D6A0"),
-                pl(wibox.widget { baticon, bat.widget, layout = wibox.layout.align.horizontal }, "#1C6E8C"),
-                pl(wibox.widget { wibox.widget.systray(), layout = wibox.layout.align.horizontal }, "alpha"),
-                rec_pl("#1C6E8C")
+                pl(wibox.widget { memicon, mem.widget, layout = wibox.layout.align.horizontal }, "alpha"),
+                pl(wibox.widget { cpuicon, cpu.widget, layout = wibox.layout.align.horizontal }, "alpha"),
+                pl(wibox.widget { tempicon, temp.widget, layout = wibox.layout.align.horizontal }, "alpha"),
+                pl(wibox.widget { baticon, bat.widget, layout = wibox.layout.align.horizontal }, "alpha"),
+                pl(wibox.widget { s.systray, layout = wibox.layout.align.horizontal }, "alpha"),
+                rec_pl("alpha")
             },
-        }, 
+        },
         {
             myclock,
             valign = "center",
