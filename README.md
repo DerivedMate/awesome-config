@@ -6,3 +6,11 @@
 | audio widget | WillPower3309 | https://github.com/WillPower3309/awesome-dotfiles/blob/master/awesome/components/volume-adjust.lua |
 | rofi theme   | adi1090x      | https://github.com/adi1090x/rofi                                                                   |
 
+# Installation
+
+## Compositor
+
+```
+sudo pacman -Syu pkgconf cmake libev libx11 yay
+yay -Syu picom-jonaburg-git
+```

@@ -10,6 +10,7 @@ local lain      = require("lain")
 local awful     = require("awful")
 local wibox     = require("wibox")
 local dpi       = require("beautiful.xresources").apply_dpi
+local naughty   = require("naughty")
 local beautiful = require("beautiful")
 -- local mylang  = require("components.lang")
 
@@ -17,7 +18,7 @@ local math, string, os = math, string, os
 local my_table = awful.util.table or gears.table -- 4.{0,1} compatibility
 
 local theme                                     = {}
-theme.dir                                       = os.getenv("HOME") .. "/.config/awesome/themes/my-powerarrow"
+theme.dir                                       = os.getenv("HOME") .. "/.config/awesome/themes/marrow"
 theme.wallpaper                                 = theme.dir .. "/wall.png"
 theme.font                                      = "Terminus 13"
 theme.fg_normal                                 = "#F0EDEE"
@@ -58,8 +59,20 @@ theme.layout_magnifier                          = theme.dir .. "/icons/magnifier
 theme.layout_floating                           = theme.dir .. "/icons/floating.png"
 theme.widget_ac                                 = theme.dir .. "/icons/ac.png"
 theme.widget_battery                            = theme.dir .. "/icons/battery.png"
-theme.widget_battery_low                        = theme.dir .. "/icons/battery_low.png"
-theme.widget_battery_empty                      = theme.dir .. "/icons/battery_empty.png"
+theme.widget_battery_stages                     = {
+    [100] = theme.dir .. "/icons/battery-100.png",
+    [90] = theme.dir .. "/icons/battery-90.png",
+    [80] = theme.dir .. "/icons/battery-80.png",
+    [70] = theme.dir .. "/icons/battery-70.png",
+    [60] = theme.dir .. "/icons/battery-60.png",
+    [50] = theme.dir .. "/icons/battery-50.png",
+    [40] = theme.dir .. "/icons/battery-40.png",
+    [30] = theme.dir .. "/icons/battery-30.png",
+    [20] = theme.dir .. "/icons/battery-20.png",
+    [10] = theme.dir .. "/icons/battery-10.png",
+}
+theme.widget_battery_sync                       = theme.dir .. "/icons/battery_sync.png"
+theme.widget_battery_charging                   = theme.dir .. "/icons/battery_charging.png"
 theme.widget_brightness                         = theme.dir .. "/icons/brightness.png"
 theme.widget_mem                                = theme.dir .. "/icons/mem.png"
 theme.widget_cpu                                = theme.dir .. "/icons/cpu.png"
@@ -88,7 +101,8 @@ theme.titlebar_maximized_button_normal_active   = theme.dir .. "/icons/titlebar/
 theme.titlebar_maximized_button_focus_inactive  = theme.dir .. "/icons/titlebar/maximized_focus_inactive.png"
 theme.titlebar_maximized_button_normal_inactive = theme.dir .. "/icons/titlebar/maximized_normal_inactive.png"
 theme.bg_systray                                = theme.bg_normal
-
+theme.notification_max_height                   = 120
+theme.notification_icon_size                    = 120
 
 local markup = lain.util.markup
 local separators = lain.util.separators
@@ -150,25 +164,26 @@ local tempicon = wibox.widget.imagebox(theme.widget_temp)
 local fsicon = wibox.widget.imagebox(theme.widget_hdd)
 
 -- Battery
-local baticon = wibox.widget.imagebox(theme.widget_battery)
+local baticon = wibox.widget.imagebox(theme.widget_battery_sync)
 local bat = lain.widget.bat({
     settings = function()
         if bat_now.status and bat_now.status ~= "N/A" then
+
             if bat_now.ac_status == 1 then
-                widget:set_markup(markup.font(theme.font, " AC "))
-                baticon:set_image(theme.widget_ac)
+                baticon:set_image(theme.widget_battery_charging)
                 return
-            elseif not bat_now.perc and tonumber(bat_now.perc) <= 5 then
-                baticon:set_image(theme.widget_battery_empty)
-            elseif not bat_now.perc and tonumber(bat_now.perc) <= 15 then
-                baticon:set_image(theme.widget_battery_low)
             else
-                baticon:set_image(theme.widget_battery)
+                local perc = tonumber(bat_now.perc)
+
+                for icon_percent, battery_icon in pairs(theme.widget_battery_stages) do
+                    if perc <= icon_percent then
+                        baticon:set_image(battery_icon)
+                    end
+                end
             end
             widget:set_markup(markup.font(theme.font, " " .. bat_now.perc .. "% "))
         else
-            widget:set_markup()
-            baticon:set_image(theme.widget_ac)
+            baticon:set_image(theme.widget_battery_sync)
         end
     end
 })
@@ -181,16 +196,6 @@ local net = lain.widget.net({
             net_now.sent .. " "))
     end
 })
-
--- Brigtness
-local brighticon = wibox.widget.imagebox(theme.widget_brightness)
--- If you use xbacklight, comment the line with "light -G" and uncomment the line bellow
--- local brightwidget = awful.widget.watch('xbacklight -get', 0.1,
-local brightwidget = awful.widget.watch('light -G', 0.1,
-    function(widget, stdout, stderr, exitreason, exitcode)
-        local brightness_level = tonumber(string.format("%.0f", stdout))
-        widget:set_markup(markup.font(theme.font, " " .. brightness_level .. "%"))
-    end)
 
 -- Separators
 local arrow = separators.arrow_left
@@ -233,56 +238,9 @@ function theme.powerline_lr(cr, width, height)
     cr:close_path()
 end
 
-local function pl(widget, bgcolor, padding)
-    return wibox.container.background(wibox.container.margin(widget, dpi(10), dpi(10), dpi(2), dpi(2)), bgcolor,
-        theme.powerline_rl)
-end
-
-local function lp(widget, bgcolor, padding)
-    return wibox.container.background(wibox.container.margin(widget, dpi(10), dpi(10), dpi(2), dpi(2)), bgcolor,
-        theme.powerline_lr)
-end
-
-local function rec_pl(color)
-    return wibox.container.background(wibox.container.margin(nil, dpi(10), dpi(10)), color,
-        function(cr, width, height)
-            local arrow_depth, offset = height / 2, 0
-
-            -- Avoid going out of the (potential) clip area
-            if arrow_depth < 0 then
-                width  = width + 2 * arrow_depth
-                offset = -arrow_depth
-            end
-
-            cr:move_to(offset, 0)
-            cr:line_to(offset + width, 0)
-            cr:line_to(offset + width, height)
-            cr:line_to(offset, height)
-            cr:line_to(offset + arrow_depth, height / 2)
-
-            cr:close_path()
-        end)
-end
-
-local function rec_lp(color)
-    return wibox.container.background(wibox.container.margin(nil, dpi(16), dpi(16)), color,
-        function(cr, width, height)
-            local arrow_depth, offset = height / 2, 0
-
-            -- Avoid going out of the (potential) clip area
-            if arrow_depth < 0 then
-                width  = width + 2 * arrow_depth
-                offset = -arrow_depth
-            end
-
-            cr:move_to(offset, 0)
-            cr:line_to(offset + width, 0)
-            cr:line_to(offset + width - arrow_depth, height / 2)
-            cr:line_to(offset + width, height)
-            cr:line_to(offset, height)
-
-            cr:close_path()
-        end)
+local function pl(widget, padding)
+    return wibox.container.margin(widget, dpi(10), dpi(10), padding or dpi(5),
+        padding or dpi(5))
 end
 
 function theme.at_screen_connect(s)
@@ -320,6 +278,17 @@ function theme.at_screen_connect(s)
     s.systray = wibox.widget.systray()
     s.systray.visible = false
 
+    -- Create an info widget group
+    s.info_widgets = {
+        pl(wibox.widget { memicon, mem.widget, layout = wibox.layout.align.horizontal }),
+        pl(wibox.widget { cpuicon, cpu.widget, layout = wibox.layout.align.horizontal }),
+        pl(wibox.widget { tempicon, temp.widget, layout = wibox.layout.align.horizontal }),
+    }
+
+    for index, widget in ipairs(s.info_widgets) do
+        s.info_widgets[index].visible = false
+    end
+
     -- Create a clock
     os.setlocale(os.getenv("LANG"))
     local myclock = wibox.widget.textclock()
@@ -341,18 +310,18 @@ function theme.at_screen_connect(s)
             layout = wibox.layout.align.horizontal,
             { -- Left widgets
                 layout = wibox.layout.fixed.horizontal,
-                rec_lp("alpha"),
-                lp(wibox.widget { require('components.lang')(), layout = wibox.layout.align.horizontal }, "alpha"),
+                wibox.container.margin(nil, dpi(30)),
+                pl(wibox.widget { require('components.lang')(), layout = wibox.layout.align.horizontal }, dpi(2)),
             },
             nil,
             { -- Right widgets
                 layout = wibox.layout.fixed.horizontal,
-                pl(wibox.widget { memicon, mem.widget, layout = wibox.layout.align.horizontal }, "alpha"),
-                pl(wibox.widget { cpuicon, cpu.widget, layout = wibox.layout.align.horizontal }, "alpha"),
-                pl(wibox.widget { tempicon, temp.widget, layout = wibox.layout.align.horizontal }, "alpha"),
-                pl(wibox.widget { baticon, bat.widget, layout = wibox.layout.align.horizontal }, "alpha"),
-                pl(wibox.widget { s.systray, layout = wibox.layout.align.horizontal }, "alpha"),
-                rec_pl("alpha")
+                s.info_widgets[0],
+                s.info_widgets[1],
+                s.info_widgets[2],
+                pl(wibox.widget { baticon, bat.widget, layout = wibox.layout.align.horizontal }),
+                pl(wibox.widget { s.systray, layout = wibox.layout.align.horizontal }),
+                wibox.container.margin(nil, dpi(30)),
             },
         },
         {

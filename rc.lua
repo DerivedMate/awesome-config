@@ -528,7 +528,7 @@ globalkeys = mytable.join(
     end, { description = "Toggle systray visibility", group = "custom" }),
     -- rofi
     awful.key({ modkey }, "x", function()
-        os.execute("~/.config/rofi/launchers/misc/launcher.sh")
+        os.execute("~/.config/rofi/launchers/type-6/launcher.sh")
         -- os.execute(string.format("rofi -show %s",
         -- 'run'))
     end,
@@ -540,7 +540,7 @@ globalkeys = mytable.join(
     end,
         { description = "obsidian" }),
     awful.key({ modkey }, "e", function()
-        os.execute("~/.config/rofi/launchers/misc/emoji.sh")
+        os.execute("~/.config/rofi/launchers/type-6/emoji.sh")
         -- os.execute(string.format("rofi -show %s",
         -- 'run'))
     end,
@@ -549,6 +549,14 @@ globalkeys = mytable.join(
         os.execute("~/.config/rofi/launchers/misc/run.sh")
         -- os.execute(string.format("rofi -show %s",
         -- 'run'))
+    end,
+        { description = "run", group = "launcher" }),
+    awful.key({ modkey }, "t", function()
+        local s = awful.screen.focused()
+
+        for index, widget in ipairs(s.info_widgets) do
+            s.info_widgets[index].visible = not widget.visible
+        end
     end,
         { description = "run", group = "launcher" })
 --]]
@@ -572,8 +580,6 @@ clientkeys = mytable.join(
         { description = "move to master", group = "client" }),
     awful.key({ modkey, }, "o", function(c) c:move_to_screen() end,
         { description = "move to screen", group = "client" }),
-    awful.key({ modkey, }, "t", function(c) c.ontop = not c.ontop end,
-        { description = "toggle keep on top", group = "client" }),
     awful.key({ modkey, }, "n",
         function(c)
             -- The client currently has the input focus, so it cannot be
@@ -730,6 +736,8 @@ awful.rules.rules = {
     { rule_any = { type = { "normal", "dialog" }
     }, properties = { titlebars_enabled = true }
     },
+    { rule = { class = "firefox" },
+        properties = { opacity = 1, maximized = false, floating = false } },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
