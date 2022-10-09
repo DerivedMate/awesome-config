@@ -235,7 +235,10 @@ root.buttons(mytable.join(
 globalkeys = mytable.join(
 -- Take a screenshot
 -- https://github.com/lcpz/dots/blob/master/bin/screenshot
-    awful.key({ altkey }, "p", function() os.execute("~/bin/screenshot.sh") end, -- os.execute("flameshot gui")
+    awful.key({ modkey }, "p", function() awful.spawn.easy_async_with_shell("flameshot gui", function()
+
+        end)
+    end, -- os.execute("flameshot gui")
         { description = "take a screenshot", group = "hotkeys" }),
 
     -- X screen locker
@@ -245,10 +248,6 @@ globalkeys = mytable.join(
     -- Show help
     awful.key({ modkey, }, "s", hotkeys_popup.show_help,
         { description = "show help", group = "awesome" }),
-
-    -- Tag browsing
-    awful.key({ modkey, }, "Escape", awful.tag.history.restore,
-        { description = "go back", group = "tag" }),
 
     -- Default client focus
     awful.key({ altkey, }, "j",
@@ -502,8 +501,6 @@ globalkeys = mytable.join(
         { description = "run browser", group = "launcher" }),
     awful.key({ altkey }, "p", function()
         awful.spawn.easy_async_with_shell("scrot -d 5 -e 'mv $f ~/screenshots/'")
-        -- os.execute(string.format("rofi -show %s",
-        -- 'run'))
     end,
         { description = "emoji", group = "launcher" }),
 
@@ -528,11 +525,17 @@ globalkeys = mytable.join(
     end, { description = "Toggle systray visibility", group = "custom" }),
     -- rofi
     awful.key({ modkey }, "x", function()
-        os.execute("~/.config/rofi/launchers/type-6/launcher.sh")
+        os.execute("~/.config/rofi/launchers/own/launcher.sh")
         -- os.execute(string.format("rofi -show %s",
         -- 'run'))
     end,
         { description = "show rofi", group = "launcher" }),
+    awful.key({ modkey }, "Escape", function()
+        os.execute("~/.config/rofi/applets/bin/powermenu.sh")
+        -- os.execute(string.format("rofi -show %s",
+        -- 'run'))
+    end,
+        { description = "show powermenu", group = "launcher" }),
     awful.key({ modkey }, "o", function()
         os.execute("obsidian")
         -- os.execute(string.format("rofi -show %s",
