@@ -171,7 +171,6 @@ local bat = lain.widget.bat({
 
             if bat_now.ac_status == 1 then
                 baticon:set_image(theme.widget_battery_charging)
-                return
             else
                 local perc = tonumber(bat_now.perc)
 
@@ -184,6 +183,7 @@ local bat = lain.widget.bat({
             widget:set_markup(markup.font(theme.font, " " .. bat_now.perc .. "% "))
         else
             baticon:set_image(theme.widget_battery_sync)
+            widget:set_markup()
         end
     end
 })
