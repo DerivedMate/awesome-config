@@ -41,6 +41,8 @@ op 'Installing rust...' \
   'Successfully installed rust.' \
   'Failed to install rust.' || exit 1
 
+exec "$SHELL" || exit 1
+
 op 'Installing alacritty...' \
   'cargo install alacritty' \
   'Successfully installed alacritty.' \
