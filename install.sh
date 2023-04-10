@@ -3,6 +3,8 @@
 cd "$(dirname "$0")" || exit 1
 source ./scripts/helpers.sh
 
+# Dwall
+
 op 'Installing dwall dependencies...' \
   "sudo pacman -Sy xorg-xrandr feh cronie" \
   'Dependencies installed successfully.' \
@@ -31,3 +33,41 @@ op 'Adding dwall cron job...' \
   " \
   "Successfully added \"$cron_job\"" \
   "Failed to add \"$cron_job\"" || exit 1
+
+# Alacritty
+
+op 'Installing rust...' \
+  "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh" \
+  'Successfully installed rust.' \
+  'Failed to install rust.' || exit 1
+
+op 'Installing alacritty...' \
+  'cargo install alacritty' \
+  'Successfully installed alacritty.' \
+  'Failed to install alacritty.' || exit 1
+
+op 'Cloning alacritty repo...' \
+  'git clone https://github.com/alacritty/alacritty.git && cd alacritty' \
+  'Successfully copied alacritty repo.' \
+  'Failed to copy alacritty repo.' || exit 1
+
+op 'Installing alacritty terminfo...' \
+  'infocmp alacritty || sudo tic -xe alacritty,alacritty-direct extra/alacritty.info' \
+  'Successfully installed alacritty terminfo.' \
+  'Failed to install alacritty terminfo.' || exit 1
+
+op 'Installing alacritty zsh completions...' \
+  " mkdir -p ${ZDOTDIR:-~}/.zsh_functions                                   \
+    echo 'fpath+=${ZDOTDIR:-~}/.zsh_functions' >> ${ZDOTDIR:-~}/.zshrc      \
+    cp extra/completions/_alacritty ${ZDOTDIR:-~}/.zsh_functions/_alacritty \
+  " \
+  'Successfully installed alacritty zsh completions.' \
+  'Failed to install alacritty zsh completions.' || exit 1
+
+op 'Installing alacritty bash completions...' \
+  " mkdir -p ~/.bash_completion                                       \
+    cp extra/completions/alacritty.bash ~/.bash_completion/alacritty  \
+    echo \"source ~/.bash_completion/alacritty\" >> ~/.bashrc           \
+  " \
+  'Successfully installed alacritty zsh completions.' \
+  'Failed to install alacritty zsh completions.' || exit 1
