@@ -4,7 +4,6 @@
      github.com/lcpz
 
 --]]
-
 -- {{{ Required libraries
 
 -- If LuaRocks is installed, make sure that packages installed through it are
@@ -81,38 +80,37 @@ awful.spawn.with_shell(
     'dex --environment Awesome --autostart --search-paths "$XDG_CONFIG_DIRS/autostart:$XDG_CONFIG_HOME/autostart"' -- https://github.com/jceb/dex
 )
 --]]
-
 -- }}}
 
 -- {{{ Variable definitions
 
-local themes = {
-    "blackburn", -- 1
-    "copland", -- 2
-    "dremora", -- 3
-    "holo", -- 4
-    "multicolor", -- 5
-    "powerarrow", -- 6
+local themes                           = {
+    "blackburn",       -- 1
+    "copland",         -- 2
+    "dremora",         -- 3
+    "holo",            -- 4
+    "multicolor",      -- 5
+    "powerarrow",      -- 6
     "powerarrow-dark", -- 7
-    "rainbow", -- 8
-    "steamburn", -- 9
-    "vertex", -- 10
-    "my-powerarrow", -- 11
-    "my-min" -- 12
+    "rainbow",         -- 8
+    "steamburn",       -- 9
+    "vertex",          -- 10
+    "my-powerarrow",   -- 11
+    "my-min"           -- 12
 }
 
-local chosen_theme = "marrow"
-local modkey       = "Mod4"
-local altkey       = "Mod1"
-local terminal     = "alacritty"
-local vi_focus     = false -- vi-like client focus https://github.com/lcpz/awesome-copycats/issues/275
-local cycle_prev   = true -- cycle with only the previously focused client or all https://github.com/lcpz/awesome-copycats/issues/274
-local editor       = os.getenv("EDITOR") or "nvim"
-local browser      = "firefox"
+local chosen_theme                     = "marrow"
+local modkey                           = "Mod4"
+local altkey                           = "Mod1"
+local terminal                         = "alacritty"
+local vi_focus                         = false -- vi-like client focus https://github.com/lcpz/awesome-copycats/issues/275
+local cycle_prev                       = true -- cycle with only the previously focused client or all https://github.com/lcpz/awesome-copycats/issues/274
+local editor                           = os.getenv("EDITOR") or "nvim"
+local browser                          = "firefox"
 
-awful.util.terminal = terminal
-awful.util.tagnames = { "1", "2", "3", "4", "5", "6" }
-awful.layout.layouts = {
+awful.util.terminal                    = terminal
+awful.util.tagnames                    = { "1", "2", "3", "4", "5", "6" }
+awful.layout.layouts                   = {
     awful.layout.suit.tile
 }
 
@@ -126,7 +124,7 @@ lain.layout.cascade.tile.extra_padding = 5
 lain.layout.cascade.tile.nmaster       = 5
 lain.layout.cascade.tile.ncol          = 2
 
-awful.util.taglist_buttons = mytable.join(
+awful.util.taglist_buttons             = mytable.join(
     awful.button({}, 1, function(t) t:view_only() end),
     awful.button({ modkey }, 1, function(t)
         if client.focus then client.focus:move_to_tag(t) end
@@ -139,7 +137,7 @@ awful.util.taglist_buttons = mytable.join(
     awful.button({}, 5, function(t) awful.tag.viewprev(t.screen) end)
 )
 
-awful.util.tasklist_buttons = mytable.join(
+awful.util.tasklist_buttons            = mytable.join(
     awful.button({}, 1, function(c)
         if c == client.focus then
             c.minimized = true
@@ -162,11 +160,11 @@ beautiful.init(string.format("%s/.config/awesome/themes/%s/theme.lua", os.getenv
 
 -- Create a launcher widget and a main menu
 local myawesomemenu = {
-    { "Hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
-    { "Manual", string.format("%s -e man awesome", terminal) },
+    { "Hotkeys",     function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
+    { "Manual",      string.format("%s -e man awesome", terminal) },
     { "Edit config", string.format("%s -e %s %s", terminal, editor, awesome.conffile) },
-    { "Restart", awesome.restart },
-    { "Quit", function() awesome.quit() end },
+    { "Restart",     awesome.restart },
+    { "Quit",        function() awesome.quit() end },
 }
 
 local mymainmenu = freedesktop.menu.build {
@@ -235,10 +233,11 @@ root.buttons(mytable.join(
 globalkeys = mytable.join(
 -- Take a screenshot
 -- https://github.com/lcpz/dots/blob/master/bin/screenshot
-    awful.key({ modkey }, "p", function() awful.spawn.easy_async_with_shell("flameshot gui", function()
+    awful.key({ modkey }, "p", function()
+            awful.spawn.easy_async_with_shell("flameshot gui", function()
 
-        end)
-    end, -- os.execute("flameshot gui")
+            end)
+        end, -- os.execute("flameshot gui")
         { description = "take a screenshot", group = "hotkeys" }),
 
     -- X screen locker
@@ -329,13 +328,13 @@ globalkeys = mytable.join(
 
     -- Show/hide wibox
     awful.key({ modkey }, "b", function()
-        for s in screen do
-            s.mywibox.visible = not s.mywibox.visible
-            if s.mybottomwibox then
-                s.mybottomwibox.visible = not s.mybottomwibox.visible
+            for s in screen do
+                s.mywibox.visible = not s.mywibox.visible
+                if s.mybottomwibox then
+                    s.mybottomwibox.visible = not s.mybottomwibox.visible
+                end
             end
-        end
-    end,
+        end,
         { description = "toggle wibox", group = "awesome" }),
 
     --[[ Dynamic tagging
@@ -360,7 +359,6 @@ globalkeys = mytable.join(
         { description = "reload awesome", group = "awesome" }),
     awful.key({ modkey, "Shift" }, "q", awesome.quit,
         { description = "quit awesome", group = "awesome" }),
-
     awful.key({ modkey }, "l", function() awful.tag.incmwfact(0.05) end,
         { description = "increase master width factor", group = "layout" }),
     awful.key({ modkey }, "h", function() awful.tag.incmwfact(-0.05) end,
@@ -373,7 +371,6 @@ globalkeys = mytable.join(
         { description = "increase the number of columns", group = "layout" }),
     awful.key({ modkey, "Control" }, "l", function() awful.tag.incncol(-1, nil, true) end,
         { description = "decrease the number of columns", group = "layout" }),
-
     awful.key({ modkey, "Control" }, "n", function()
         local c = awful.client.restore()
         -- Focus restored client
@@ -500,24 +497,9 @@ globalkeys = mytable.join(
     awful.key({ modkey }, "q", function() awful.spawn(browser) end,
         { description = "run browser", group = "launcher" }),
     awful.key({ altkey }, "p", function()
-        awful.spawn.easy_async_with_shell("scrot -d 5 -e 'mv $f ~/screenshots/'")
-    end,
-        { description = "emoji", group = "launcher" }),
-
-    -- Default
-    --[[ Menubar
-    awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
-    --]]
-    --[[ dmenu
-    awful.key({ modkey }, "x", function ()
-            os.execute(string.format("dmenu_run -i -fn 'Monospace' -nb '%s' -nf '%s' -sb '%s' -sf '%s'",
-            beautiful.bg_normal, beautiful.fg_normal, beautiful.bg_focus, beautiful.fg_focus))
+            awful.spawn.easy_async_with_shell("scrot -d 5 -e 'mv $f ~/screenshots/'")
         end,
-        {description = "show dmenu", group = "launcher"})
-    --]]
-    -- alternatively use rofi, a dmenu-like application with more features
-    -- check https://github.com/DaveDavenport/rofi for more details
+        { description = "emoji", group = "launcher" }),
     awful.key({ modkey }, "=", function()
         if awful.screen.focused().systray then
             awful.screen.focused().systray.visible = not awful.screen.focused().systray.visible
@@ -525,42 +507,24 @@ globalkeys = mytable.join(
     end, { description = "Toggle systray visibility", group = "custom" }),
     -- rofi
     awful.key({ modkey }, "x", function()
-        os.execute("~/.config/rofi/launchers/own/launcher.sh")
-        -- os.execute(string.format("rofi -show %s",
-        -- 'run'))
-    end,
+            os.execute("~/.config/awesome/rofi/launcher/launcher.sh")
+        end,
         { description = "show rofi", group = "launcher" }),
     awful.key({ modkey }, "Escape", function()
-        os.execute("~/.config/rofi/applets/bin/powermenu.sh")
-        -- os.execute(string.format("rofi -show %s",
-        -- 'run'))
-    end,
+            os.execute("~/.config/awesome/rofi/applets/bin/powermenu.sh")
+        end,
         { description = "show powermenu", group = "launcher" }),
     awful.key({ modkey }, "o", function()
-        os.execute("obsidian")
-        -- os.execute(string.format("rofi -show %s",
-        -- 'run'))
-    end,
+            os.execute("obsidian")
+        end,
         { description = "obsidian" }),
-    awful.key({ modkey }, "e", function()
-        os.execute("~/.config/rofi/launchers/type-6/emoji.sh")
-        -- os.execute(string.format("rofi -show %s",
-        -- 'run'))
-    end,
-        { description = "emoji", group = "launcher" }),
-    awful.key({ modkey }, "r", function()
-        os.execute("~/.config/rofi/launchers/misc/run.sh")
-        -- os.execute(string.format("rofi -show %s",
-        -- 'run'))
-    end,
-        { description = "run", group = "launcher" }),
     awful.key({ modkey }, "t", function()
-        local s = awful.screen.focused()
+            local s = awful.screen.focused()
 
-        for index, widget in ipairs(s.info_widgets) do
-            s.info_widgets[index].visible = not widget.visible
-        end
-    end,
+            for index, widget in ipairs(s.info_widgets) do
+                s.info_widgets[index].visible = not widget.visible
+            end
+        end,
         { description = "run", group = "launcher" })
 --]]
 --]]
@@ -686,8 +650,10 @@ root.keys(globalkeys)
 -- Rules to apply to new clients (through the "manage" signal).
 awful.rules.rules = {
     -- All clients will match this rule.
-    { rule = {},
-        properties = { border_width = beautiful.border_width,
+    {
+        rule = {},
+        properties = {
+            border_width = beautiful.border_width,
             border_color = beautiful.border_normal,
             focus = awful.client.focus.filter,
             raise = true,
@@ -700,47 +666,54 @@ awful.rules.rules = {
     },
 
     -- Floating clients.
-    { rule_any = {
-        instance = {
-            "DTA", -- Firefox addon DownThemAll.
-            "copyq", -- Includes session name in class.
-            "pinentry",
-            "zoom"
+    {
+        rule_any = {
+            instance = {
+                "DTA", -- Firefox addon DownThemAll.
+                "copyq", -- Includes session name in class.
+                "pinentry",
+                "zoom"
+            },
+            class = {
+                "Arandr",
+                "Blueman-manager",
+                "Gpick",
+                "Kruler",
+                "MessageWin", -- kalarm.
+                "Sxiv",
+                "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
+                "Wpa_gui",
+                "veromix",
+                "xtightvncviewer"
+            },
+            -- Note that the name property shown in xprop might be set slightly after creation of the client
+            -- and the name shown there might not match defined rules here.
+            name = {
+                "Event Tester", -- xev.
+            },
+            role = {
+                "AlarmWindow", -- Thunderbird's calendar.
+                "ConfigManager", -- Thunderbird's about:config.
+                "pop-up",    -- e.g. Google Chrome's (detached) Developer Tools.
+            }
         },
-        class = {
-            "Arandr",
-            "Blueman-manager",
-            "Gpick",
-            "Kruler",
-            "MessageWin", -- kalarm.
-            "Sxiv",
-            "Tor Browser", -- Needs a fixed window size to avoid fingerprinting by screen size.
-            "Wpa_gui",
-            "veromix",
-            "xtightvncviewer"
-        },
-
-        -- Note that the name property shown in xprop might be set slightly after creation of the client
-        -- and the name shown there might not match defined rules here.
-        name = {
-            "Event Tester", -- xev.
-        },
-        role = {
-            "AlarmWindow", -- Thunderbird's calendar.
-            "ConfigManager", -- Thunderbird's about:config.
-            "pop-up", -- e.g. Google Chrome's (detached) Developer Tools.
+        properties = {
+            floating = true
+            ,
+            placement = awful.placement.centered + awful.placement.no_overlap
         }
-    }, properties = { floating = true
-        , placement = awful.placement.centered + awful.placement.no_overlap
-    }
     },
 
     -- Add titlebars to normal clients and dialogs
-    { rule_any = { type = { "normal", "dialog" }
-    }, properties = { titlebars_enabled = true }
+    {
+        rule_any = { type = { "normal", "dialog" }
+        },
+        properties = { titlebars_enabled = true }
     },
-    { rule = { class = "firefox" },
-        properties = { opacity = 1, maximized = false, floating = false } },
+    {
+        rule = { class = "firefox" },
+        properties = { opacity = 1, maximized = false, floating = false }
+    },
 
     -- Set Firefox to always map on the tag named "2" on screen 1.
     -- { rule = { class = "Firefox" },
@@ -787,20 +760,24 @@ client.connect_signal("request::titlebars", function(c)
     )
 
     awful.titlebar(c, { size = 0 }):setup {
-        { -- Left
+        {
+          -- Left
             awful.titlebar.widget.iconwidget(c),
             buttons = buttons,
             layout  = wibox.layout.fixed.horizontal
         },
-        { -- Middle
-            { -- Title
+        {
+              -- Middle
+            {
+              -- Title
                 align  = "center",
                 widget = awful.titlebar.widget.titlewidget(c)
             },
             buttons = buttons,
             layout  = wibox.layout.flex.horizontal
         },
-        { -- Right
+        {
+          -- Right
             awful.titlebar.widget.floatingbutton(c),
             awful.titlebar.widget.maximizedbutton(c),
             awful.titlebar.widget.stickybutton(c),
