@@ -48,6 +48,10 @@ op 'Installing alacritty...' \
   'Successfully installed alacritty.' \
   'Failed to install alacritty.' || exit 1
 
+if [ -d alacritty ]; then
+  rm -r alacritty
+fi
+
 op 'Cloning alacritty repo...' \
   'git clone https://github.com/alacritty/alacritty.git && cd alacritty' \
   'Successfully copied alacritty repo.' \
