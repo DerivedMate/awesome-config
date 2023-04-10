@@ -80,3 +80,15 @@ op 'Installing rofi...' \
   'sudo pacman -Syu rofi' \
   'Successfully installed rofi.' \
   'Failed to install rofi.' || exit 1
+
+# picom
+
+op 'Installing picom...' \
+  'yay -Syu picom-jonaburg-git' \
+  'Successfully installed picom' \
+  'Failed to install picom' || exit 1
+
+op 'Copying picom config...' \
+  'yes | cp ./picom.conf ..' \
+  'Successfully copied picom config.' \
+  'Failed to copy picom config.' || exit 1
