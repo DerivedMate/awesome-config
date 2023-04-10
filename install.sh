@@ -2,6 +2,7 @@
 
 cd "$(dirname "$0")" || exit 1
 source ./scripts/helpers.sh
+root_dir=$(pwd)
 
 # Dwall
 
@@ -49,7 +50,7 @@ op 'Installing alacritty...' \
   'Failed to install alacritty.' || exit 1
 
 if [ -d alacritty ]; then
-  rm -r alacritty
+  yes | rm -r alacritty
 fi
 
 op 'Cloning alacritty repo...' \
@@ -77,6 +78,8 @@ op 'Installing alacritty bash completions...' \
   " \
   'Successfully installed alacritty zsh completions.' \
   'Failed to install alacritty zsh completions.' || exit 1
+
+cd "$root_dir" || exit 1
 
 # rofi
 
