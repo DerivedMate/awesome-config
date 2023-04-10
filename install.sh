@@ -11,10 +11,10 @@ op 'Installing dwall dependencies...' \
   'Failed to install dependencies.' || exit 1
 
 op 'Installing dwall...' \
-  " git clone https://github.com/adi1090x/dynamic-wallpaper.git \
-    cd dynamic-wallpaper                                        \
-    chmod +x install.sh                                         \
-    ./install.sh || exit 1                                      \
+  " git clone https://github.com/adi1090x/dynamic-wallpaper.git
+    cd dynamic-wallpaper                                       
+    chmod +x install.sh                                        
+    ./install.sh || exit 1                                     
   " \
   'Successfully installed dwall.' \
   'Failed to install dwall.' || exit 1
@@ -26,10 +26,10 @@ op 'Enabling cronie...' \
 
 cron_job="0 * * * * $SHELL PATH=$PATH DISPLAY=$DISPLAY DESKTOP_SESSION=$DESKTOP_SESSION DBUS_SESSION_BUS_ADDRESS=\"$DBUS_SESSION_BUS_ADDRESS\" /usr/bin/dwall -s firewatch"
 op 'Adding dwall cron job...' \
-  " (                                \
-      crontab -l                     \
-      echo \"$cron_job\"             \
-    ) | sort - | uniq - | crontab -  \
+  " (                                
+      crontab -l                     
+      echo \"$cron_job\"             
+    ) | sort - | uniq - | crontab -  
   " \
   "Successfully added \"$cron_job\"" \
   "Failed to add \"$cron_job\"" || exit 1
@@ -57,17 +57,17 @@ op 'Installing alacritty terminfo...' \
   'Failed to install alacritty terminfo.' || exit 1
 
 op 'Installing alacritty zsh completions...' \
-  " mkdir -p ${ZDOTDIR:-~}/.zsh_functions                                   \
-    echo 'fpath+=${ZDOTDIR:-~}/.zsh_functions' >> ${ZDOTDIR:-~}/.zshrc      \
-    cp extra/completions/_alacritty ${ZDOTDIR:-~}/.zsh_functions/_alacritty \
+  " mkdir -p ${ZDOTDIR:-~}/.zsh_functions                                   
+    echo 'fpath+=${ZDOTDIR:-~}/.zsh_functions' >> ${ZDOTDIR:-~}/.zshrc      
+    cp extra/completions/_alacritty ${ZDOTDIR:-~}/.zsh_functions/_alacritty 
   " \
   'Successfully installed alacritty zsh completions.' \
   'Failed to install alacritty zsh completions.' || exit 1
 
 op 'Installing alacritty bash completions...' \
-  " mkdir -p ~/.bash_completion                                       \
-    cp extra/completions/alacritty.bash ~/.bash_completion/alacritty  \
-    echo \"source ~/.bash_completion/alacritty\" >> ~/.bashrc           \
+  " mkdir -p ~/.bash_completion                                      
+    cp extra/completions/alacritty.bash ~/.bash_completion/alacritty 
+    echo \"source ~/.bash_completion/alacritty\" >> ~/.bashrc        
   " \
   'Successfully installed alacritty zsh completions.' \
   'Failed to install alacritty zsh completions.' || exit 1
