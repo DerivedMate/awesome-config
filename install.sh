@@ -73,3 +73,10 @@ op 'Installing alacritty bash completions...' \
   " \
   'Successfully installed alacritty zsh completions.' \
   'Failed to install alacritty zsh completions.' || exit 1
+
+# rofi
+
+op 'Installing rofi...' \
+  'sudo pacman -Syu rofi' \
+  'Successfully installed rofi.' \
+  'Failed to install rofi.' || exit 1
