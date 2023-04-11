@@ -91,7 +91,7 @@ op 'Installing rofi...' \
 # picom
 cd "$root_dir" || exit 1
 op 'Installing picom...' \
-  'yay -Syu picom-jonaburg-git' \
+  'sudo pacman -S picom' \
   'Successfully installed picom' \
   'Failed to install picom' || exit 1
 
