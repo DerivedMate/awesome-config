@@ -9,7 +9,7 @@ nasm
 obs-studio
 perl
 texlive-most
-textlive-lang
+texlive-lang
 texlive-bibtexextra
 texlive-fontsextra
 virtualbox
