@@ -91,7 +91,7 @@ op 'Installing rofi...' \
 # picom
 cd "$root_dir" || exit 1
 op 'Installing picom...' \
-  'sudo yay -Syu picom-jonaburg-git' \
+  'yay -Syu picom-jonaburg-git' \
   'Successfully installed picom' \
   'Failed to install picom' || exit 1
 
@@ -108,6 +108,6 @@ op 'Installing remaining pacman packages...' \
   'Failed to install remaining packages.' || exit 1
 
 op 'Installing remaining aur packages...' \
-  'sudo yay -Syu - < aur-packages.txt' \
+  'yay -Syu - < aur-packages.txt' \
   'Successfully installed remaining aur packages.' \
   'Failed to install remaining aur packages.' || exit 1
