@@ -1,0 +1,15 @@
+cmake
+bat
+brightnessctl
+flameshot
+firefox
+gdb
+htop
+nasm
+obs-studio
+perl
+texlive-most
+textlive-lang
+texlive-bibtexextra
+texlive-fontsextra
+virtualbox
