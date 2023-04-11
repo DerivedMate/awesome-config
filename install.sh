@@ -108,6 +108,6 @@ op 'Installing remaining pacman packages...' \
   'Failed to install remaining packages.' || exit 1
 
 op 'Installing remaining aur packages...' \
-  'yay -Syu - < aur-packages.txt' \
+  'yay -S --needed --noconfirm - < aur-packages.txt' \
   'Successfully installed remaining aur packages.' \
   'Failed to install remaining aur packages.' || exit 1
