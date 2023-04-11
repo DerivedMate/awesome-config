@@ -6,6 +6,8 @@ root_dir=$(pwd)
 
 # Dwall
 
+sudo pacman -Syu yay || exit 1
+
 op 'Installing dwall dependencies...' \
   "sudo pacman -Sy xorg-xrandr feh cronie" \
   'Dependencies installed successfully.' \
@@ -36,6 +38,11 @@ op 'Adding dwall cron job...' \
   "Failed to add \"$cron_job\"" || exit 1
 
 # Alacritty
+
+op 'Installing alacritty deps...' \
+  'pacman -S --noconfirm cmake freetype2 fontconfig pkg-config make libxcb libxkbcommon python' \
+  'Successfully installed alacritty deps.' \
+  'Failed to install alacritty deps.' || exit 1
 
 op 'Installing rust...' \
   "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh" \
@@ -111,3 +118,7 @@ op 'Installing remaining aur packages...' \
   'yay -S --needed --noconfirm - < aur-packages.txt' \
   'Successfully installed remaining aur packages.' \
   'Failed to install remaining aur packages.' || exit 1
+
+echo 0 | sudo tee /proc/sys/vm/dirty_expire_centisecs
+echo 0 | sudo tee /proc/sys/vm/dirty_writeback_centisecs
+echo 1 | sudo tee /proc/sys/vm/drop_caches

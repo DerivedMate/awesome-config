@@ -1,3 +1,4 @@
+awesome
 cmake
 bat
 brightnessctl
