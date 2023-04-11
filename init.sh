@@ -8,5 +8,4 @@ xinput --set-prop "ELAN071A:00 04F3:30FD Touchpad" "libinput Tapping Enabled" 1
 dwall -s firewatch
 
 # picom
-
-picom
+picom --log-file ~/picom.log --config ~/.config/picom.conf

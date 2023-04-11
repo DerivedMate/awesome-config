@@ -13,3 +13,4 @@ texlive-lang
 texlive-bibtexextra
 texlive-fontsextra
 virtualbox
+github-cli
