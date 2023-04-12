@@ -56,38 +56,6 @@ op 'Installing alacritty...' \
   'Successfully installed alacritty.' \
   'Failed to install alacritty.' || exit 1
 
-if [ -d alacritty ]; then
-  yes | rm -r alacritty
-fi
-
-op 'Cloning alacritty repo...' \
-  'git clone https://github.com/alacritty/alacritty.git && cd alacritty' \
-  'Successfully copied alacritty repo.' \
-  'Failed to copy alacritty repo.' || exit 1
-
-op 'Installing alacritty terminfo...' \
-  'infocmp alacritty || sudo tic -xe alacritty,alacritty-direct extra/alacritty.info' \
-  'Successfully installed alacritty terminfo.' \
-  'Failed to install alacritty terminfo.' || exit 1
-
-op 'Installing alacritty zsh completions...' \
-  " mkdir -p ${ZDOTDIR:-~}/.zsh_functions                                   
-    echo 'fpath+=${ZDOTDIR:-~}/.zsh_functions' >> ${ZDOTDIR:-~}/.zshrc      
-    cp extra/completions/_alacritty ${ZDOTDIR:-~}/.zsh_functions/_alacritty 
-  " \
-  'Successfully installed alacritty zsh completions.' \
-  'Failed to install alacritty zsh completions.' || exit 1
-
-op 'Installing alacritty bash completions...' \
-  " mkdir -p ~/.bash_completion                                      
-    cp extra/completions/alacritty.bash ~/.bash_completion/alacritty 
-    echo \"source ~/.bash_completion/alacritty\" >> ~/.bashrc        
-  " \
-  'Successfully installed alacritty zsh completions.' \
-  'Failed to install alacritty zsh completions.' || exit 1
-
-cd "$root_dir" || exit 1
-
 # rofi
 
 op 'Installing rofi...' \
@@ -119,6 +87,7 @@ op 'Installing remaining aur packages...' \
   'Successfully installed remaining aur packages.' \
   'Failed to install remaining aur packages.' || exit 1
 
+sync
 echo 0 | sudo tee /proc/sys/vm/dirty_expire_centisecs
 echo 0 | sudo tee /proc/sys/vm/dirty_writeback_centisecs
 echo 1 | sudo tee /proc/sys/vm/drop_caches
